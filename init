@@ -1,0 +1,33 @@
+#!/bin/sh
+echo "Inside initramfs init..."
+bin/mount -t proc none /proc
+bin/mount -t sysfs none /sys
+bin/mount -t devtmpfs none /dev
+bin/mount -t tmpfs none /run
+
+#Function to parse kernel command line arguments
+cmdline() {
+    local value
+    value="$(cat /proc/cmdline)"
+    value="${value##* $1=}"
+    value="${value%% *}"
+    [ "$value" != "" ] && echo "$value"
+}
+
+echo "Executing veritysetup..."
+#For usecases where this function call is expensive, hardcode the veritysetup parameters in this init file instead of reading from kernel command line arguments
+verity_name=$(cmdline verity_name)
+bin/veritysetup --verbose --data-block-size=$(cmdline data_block_size) --hash-block-size=$(cmdline hash_block_size) create $verity_name $(cmdline data_dev) $(cmdline hash_dev) $(cmdline root_hash)
+
+#bin/sleep 0.25
+bin/mount /dev/mapper/$verity_name /mnt/root
+bin/mount -t tmpfs tmpfs /mnt/root/etc
+bin/mount -t tmpfs tmpfs /mnt/root/var
+
+bin/mount --move /proc /mnt/root/proc
+bin/mount --move /sys /mnt/root/sys
+bin/mount --move /dev /mnt/root/dev
+bin/mount --move /run /mnt/root/run
+
+echo "Executing switch_root..."
+exec bin/switch_root /mnt/root /usr/lib/systemd/systemd-bootchart
