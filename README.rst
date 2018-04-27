@@ -55,16 +55,17 @@ Details
 
    
 * Copy this zipped initramfs file to the corresponding EFI boot partition of the target image.
-  E.g. assuming /dev/loop0 
+  E.g. assuming boot partition of target image is mounted on "mnt" directory
 
 .. code-block:: console
 
-   $ sudo mount /dev/loop0p1 mnt
    $ sudo cp initramfs.cpio.gz mnt/EFI/org.clearlinux/
 
 * Update the bootloader config file with the partition, root_hash and
-  initramfs info. The following is an example for QEMU. Ensure that the data_dev, hash_dev, 
-  root_hash and initrd are updated accordingly.
+  initramfs info. The following is an example for QEMU. Ensure that the "data_block_size",
+  "hash_block_size", "verity_name", "data_dev", "hash_dev", "root_hash"
+  and "initrd" options are updated accordingly.
+  Ensure that the "root", "init", "initcall_debug" and "rw" options are not present.
 
 .. code-block:: console
 
@@ -73,8 +74,21 @@ Details
    options quiet data_block_size=1024 hash_block_size=1024 verity_name=root data_dev=/dev/vda3 hash_dev=/dev/vda4 root_hash=9974e6ee8750462d5b66be2d8fb6a21edebd4ee56acfd51183d1d05b5d50755c modprobe.blacklist=ccipciedrv,aalbus,aalrms,aalrmc console=tty0 console=ttyS0,115200n8  tsc=reliable no_timer_check noreplace-smp kvm-intel.nested=1 rootfstype=ext4,btrfs,xfs intel_iommu=igfx_off cryptomgr.notests rcupdate.rcu_expedited=1 i915.fastboot=1 rcu_nocbs=0-64
    initrd EFI/org.clearlinux/initramfs.cpio.gz
    
+* Test it on QEMU. Refer to "qemu_results.png" for basic test result. E.g.
+
+.. code-block:: console
+
    $ sudo ./start_qemu.sh release.img
+
+* `sample.py`_
+   - This python script does all the above mentioned steps right from generating the content
+     to updating the bootloader config file. E.g.
+
+.. code-block:: console
+
+   $ sudo python sample.py
 
 .. _mixer.sh: https://github.com/reaganlo/clr-dm-verity/blob/master/mixer.sh
 .. _dm-verity.sh: https://github.com/reaganlo/clr-dm-verity/blob/master/dm-verity.sh
 .. _initramfs.sh: https://github.com/reaganlo/clr-dm-verity/blob/master/initramfs.sh
+.. _sample.py: https://github.com/reaganlo/clr-dm-verity/blob/master/sample.py

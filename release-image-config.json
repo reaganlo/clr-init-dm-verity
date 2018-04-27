@@ -9,9 +9,8 @@
                           { "disk" : "release.img", "partition" : 3, "type" : "ext4" },
                           { "disk" : "release.img", "partition" : 4, "type" : "ext4" } ],
     "PartitionMountPoints" : [ { "disk" : "release.img", "partition" : 1, "mount" : "/boot" },
-                               { "disk" : "release.img", "partition" : 3, "mount" : "/" },
-                               { "disk" : "release.img", "partition" : 4, "mount" : "/mnt/hashdev" } ],
+                               { "disk" : "release.img", "partition" : 3, "mount" : "/" } ],
     "Version": "latest",
-    "Bundles": ["dm-verity"]
+    "Bundles": ["kernel-native", "os-core", "dm-verity"]
 }
 

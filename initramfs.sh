@@ -26,6 +26,6 @@ cp init initramfs/
 cd initramfs
 
 chmod +x init
-
-echo $1
 find . -print0 | cpio --null -ov --format=newc | gzip -9 > ../$1
+
+cd ..
