@@ -7,7 +7,7 @@ mkdir -p initramfs/{bin,dev,etc,lib64,usr/lib64,mnt/root,proc,root,sys,run}
 mixversion=$(cat mixversion)
 echo $mixversion
 
-if [ $mixversion != "" ]
+if [ "$mixversion" != "" ]
 then
    path="update/image/$mixversion/full"
 else
